@@ -1,0 +1,26 @@
+{
+  "skill_name": "blueai-cli-auth",
+  "evals": [
+    {
+      "id": 0,
+      "name": "workspace-shadowing-ci",
+      "prompt": "我在 CI 的 build 脚本里加了 `export BLUEAI_API_KEY=blueai-newkey2026`，但 blueai-cli 跑出来还是用的旧 key，调用直接 403。我本地 ~/.blueai 里之前确实配过一个旧 key。为什么 env var 没生效？怎么排查和修？",
+      "expected_output": "应诊断出工作区 .blueai/credentials.json 静默压过 env var（优先级 2 > 3），或 BLUEAI_CONFIG_DIR 关掉了 walk-up；给出用 doctor 看 workplace 命中路径、删/改该文件或改用 --api-key 的修法；区分 403 是业务错而非 exit 3。",
+      "files": []
+    },
+    {
+      "id": 1,
+      "name": "project-scoped-key-setup",
+      "prompt": "我们团队有个 repo 要用跟我个人账号不一样的 blueai key，只在这个项目里生效，我在别的目录还是想用自己原来的 key。这个该怎么配？给我具体步骤。",
+      "expected_output": "应选工作区层（项目根 .blueai/credentials.json，格式 {\"default\":{\"apiKey\":...}}），而不是 config init（那是用户级会影响全局）；应提醒加入 .gitignore；应说明 walk-up 优先级高于用户级所以会在该 repo 覆盖。",
+      "files": []
+    },
+    {
+      "id": 2,
+      "name": "exit3-after-profile-switch",
+      "prompt": "blueai-cli 一直报 exit code 3 No API key found，但我明明 config init 过。我记得之前跑过 blueai-cli config profiles --use prod 切环境。到底哪出问题了？",
+      "expected_output": "应诊断 profile 错位：key 存在 default 下但 active 是 prod（新建 profile 不复制凭据）；给出用 config profiles 查每个 profile 的 hasApiKey/active，再给当前 active profile config init，或 --use 切回有 key 的 profile。",
+      "files": []
+    }
+  ]
+}

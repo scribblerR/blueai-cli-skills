@@ -1,0 +1,110 @@
+{
+  "skill_name": "blueai-skill-creator",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "帮我做一个 skill，自动把指定小红书博主的最新帖子抓下来、存成 markdown 归档到本地",
+      "expected_output": "触发 blueai-skill-creator：检测 skill-creator → spec tree 发现 social-data 抓取能力 → 委派 skill-creator 并注入房规（统一鉴权、内部优先）",
+      "should_trigger": true,
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "把我刚才那套「调即梦文生图 + 上传到媒体存储 + 返回分享链接」的流程封装成一个 skill 吧",
+      "expected_output": "触发：发现 pre-pass 映射出 jimeng 文生图 + media-storage 两个内部能力，产出 skill 内部优先、统一鉴权",
+      "should_trigger": true,
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "给我搞个 skill，输入一个公众号文章链接就帮我做批量情感分析",
+      "expected_output": "触发：映射到 social-data（公众号抓取）+ datahub（LLM 情感分析）",
+      "should_trigger": true,
+      "files": []
+    },
+    {
+      "id": 4,
+      "prompt": "改一下我那个 video-archive skill，让它顺便也调一下去水印",
+      "expected_output": "触发（改造 skill 也算）：发现 video-tools 去水印能力，按房规改造",
+      "should_trigger": true,
+      "files": []
+    },
+    {
+      "id": 5,
+      "prompt": "我想封装一个自动化能力，每天定时把某个 API 的数据拉下来生成日报，做成可复用的 skill",
+      "expected_output": "触发：先 spec tree 查内部是否已有该数据源能力，再决定内/外部",
+      "should_trigger": true,
+      "files": []
+    },
+    {
+      "id": 6,
+      "prompt": "写个 skill 帮我把 PPT 里的图片批量提取出来并加水印",
+      "expected_output": "触发；发现 pre-pass 若内部无此能力则记录为外部能力（房规允许，但需显式标注）",
+      "should_trigger": true,
+      "files": []
+    },
+    {
+      "id": 7,
+      "prompt": "用 blueai-cli 调 kling 生成一个 5 秒的猫跳舞视频，参数我不确定怎么填",
+      "expected_output": "不触发：这是用命令/查参数，归 blueai-cli-core，不是创建 skill",
+      "should_trigger": false,
+      "files": []
+    },
+    {
+      "id": 8,
+      "prompt": "blueai-cli 报 exit code 3 说 No API key found，我明明 export 了 BLUEAI_API_KEY",
+      "expected_output": "不触发：鉴权排错，归 blueai-cli-auth",
+      "should_trigger": false,
+      "files": []
+    },
+    {
+      "id": 9,
+      "prompt": "帮我写个 Python 脚本，循环调媒体存储的上传接口把这个文件夹全传上去",
+      "expected_output": "不触发：写普通脚本（非产出 skill），归 blueai-cli-core 的调用契约",
+      "should_trigger": false,
+      "files": []
+    },
+    {
+      "id": 10,
+      "prompt": "blueai-cli spec tree 这个命令输出的树怎么读？aigc 下面那些层级是什么意思",
+      "expected_output": "不触发：解释命令输出，归 blueai-cli-core",
+      "should_trigger": false,
+      "files": []
+    },
+    {
+      "id": 11,
+      "prompt": "我想给团队做一个通用的 PDF 转 Excel 的 skill，跟公司业务没关系，纯本地处理",
+      "expected_output": "边界：可触发但发现 pre-pass 会判定无内部能力→纯外部/本地，房规(2)鉴权不适用；也可由用户用裸 skill-creator。属可接受的灰区",
+      "should_trigger": true,
+      "files": []
+    },
+    {
+      "id": 12,
+      "prompt": "skill-creator 是干嘛的？我想了解下怎么自己写 skill",
+      "expected_output": "不触发：泛问 skill-creator 概念，非具体创建意图",
+      "should_trigger": false,
+      "files": []
+    },
+    {
+      "id": 13,
+      "prompt": "我那个 blueai-social-media-data skill 的鉴权还在用 secret_key + client_id 换 token，帮我改成统一 Bearer apiKey，别动 description 和抓取逻辑",
+      "expected_output": "触发，模式 B（改造）：审计鉴权 → 后端探针验证 → 最小 diff 改成统一 apiKey + 四级查找，保留 description/业务逻辑",
+      "should_trigger": true,
+      "files": []
+    },
+    {
+      "id": 14,
+      "prompt": "把我 Downloads 里那个抓数据的 skill 的 key 查找方式改得跟 blueai-cli 一样，key 名也统一成 apiKey",
+      "expected_output": "触发，模式 B：只动 key 查找/鉴权，拉齐到 blueai-cli 的四级链与 apiKey 命名",
+      "should_trigger": true,
+      "files": []
+    },
+    {
+      "id": 15,
+      "prompt": "帮我把我项目里那个直接调内部 API 的 python 脚本的鉴权改成 Bearer token 方式",
+      "expected_output": "不触发：目标是一个普通脚本而非 skill，归 blueai-cli-core；模式 B 只针对 skill",
+      "should_trigger": false,
+      "files": []
+    }
+  ]
+}

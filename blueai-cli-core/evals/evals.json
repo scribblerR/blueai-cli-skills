@@ -1,0 +1,34 @@
+{
+  "skill_name": "blueai-cli-core",
+  "iteration": 2,
+  "evals": [
+    {
+      "id": 0,
+      "name": "path-leaf-discipline",
+      "prompt": "用 blueai-cli 调即梦（jimeng）v4 文生图，prompt 是「一只戴墨镜的柴犬，扁平插画风」。先别真生成，用 dry-run 给我看 CLI 实际会发出的请求，确认参数对。",
+      "expected_output": "schema 查询用点分路径 aigc.image.text2image.jimeng.v4；调用用空格分段叶子 jimeng v4（不是 jimeng.v4）；--dry-run 预览，不真生成；过程不出现 Unknown command/not_found 的路径写法失败。",
+      "files": []
+    },
+    {
+      "id": 1,
+      "name": "double-data-field-path",
+      "prompt": "我用 blueai-cli 跑了个异步生成任务，task wait 收回来一坨 JSON。我按 .data.task_id 取任务 ID 取不到值（是 undefined）。帮我搞清楚 task_id 到底在哪个字段路径，为什么会这样。",
+      "expected_output": "指出业务 payload 在双层 data：CLI 信封的 data 是后端原始 body，其内又包 {code,message,data}，所以 task_id 在 .data.data.task_id 而非 .data.task_id；建议用 schema --resolve-refs 的 responseBody 核对实际嵌套。",
+      "files": []
+    },
+    {
+      "id": 2,
+      "name": "route-to-media-storage",
+      "prompt": "我有一个百度网盘的视频分享链接，想把它转存到云存储（COS），再生成一个能发给别人的下载短链。blueai-cli 能做吗？大概要用哪些命令？先别真跑，给我个思路和命令清单。",
+      "expected_output": "识别这属于媒体存储域、指向 blueai-cli-media-storage；用 spec list 发现真实的 upload/share 等命令而非编造；给出合理的多步链路（网盘转存→入云存储→生成分享/下载短链）；不真实调用。",
+      "files": []
+    },
+    {
+      "id": 3,
+      "name": "batch-async-pattern",
+      "prompt": "我要用 blueai-cli 一次性提交 3 个不同 prompt 的文生图任务，不想一个个等。给我一套能先把任务都发出去、过会儿再统一收结果的命令写法。",
+      "expected_output": "用 --params JSON 数组批量 + --async 立即返回 task_id，再用 task wait --all（或 --ids）+ --format ndjson 收口；体现 _label 对账、并发等约定。",
+      "files": []
+    }
+  ]
+}

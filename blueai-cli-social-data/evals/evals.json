@@ -1,0 +1,101 @@
+{
+  "skill_name": "blueai-cli-social-data",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "帮我抓一下小红书上折叠屏手机的帖子，从今年1月到3月底，只要帖子不要评论，互动量1000以上，按热度排，取500条",
+      "expected_output": "识别为 stock 模式 → 渲染参数确认表（含 CLI 命令预览）→ 用户 Y 后调 blueai-cli data social batch task → 自动轮询 status=2 → 调 data social task fetch-data 拉真实数据 → 归档 JSON 到 BASE_DIR/output/stock/<task_id>.json → 渲染 markdown 摘要。参数转换：小红书→media_id=4，2026-01-01 00:00:00 CST→1767196800，2026-03-31 23:59:59 CST→1774972799，data_type=0，min_interact_cnt=1000，max_data_cnt=500，sort={field:'interaction_cnt',order:'DESC'}",
+      "files": [],
+      "expectations": [
+        "意图识别为 stock 模式",
+        "参数确认表包含 平台/关键词/起止日期/数据范围/互动量下限/排序/最大条数 7 项",
+        "确认表展示 CLI 命令预览：blueai-cli data social batch task --params '{...}'",
+        "params JSON 中 media_id=4，start_time=1767196800，end_time=1774972799，data_type=0，min_interact_cnt=1000，max_data_cnt=500",
+        "params JSON 中 sort 对象的 field=interaction_cnt，order=DESC",
+        "命令使用 --format json，未使用 --async（默认同步等待）",
+        "等待终态后调用 blueai-cli data social task fetch-data --params '{\"task_id\":\"...\",\"limit\":500}'",
+        "归档路径包含 ~/.claude/blueai-runtime/blueai-cli-social-data/output/stock/"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "我要采集B站上华为折叠屏手机的视频，最近三个月，排除广告，互动量大于500，最多取300条",
+      "expected_output": "识别为 stock 模式，B站→media_id=7，最近三个月→start=今天-90天的 00:00:00 CST，post_types=['video','image_text']（排除广告），min_interact_cnt=500，max_data_cnt=300",
+      "files": [],
+      "expectations": [
+        "media_id=7（B站）",
+        "start_time 为今天减 90 天的 00:00:00 CST 时间戳",
+        "end_time 为今天的 23:59:59 CST 时间戳",
+        "post_types 数组包含 'video' 和 'image_text'，不包含 'ad_video' 或 'ad_image_text'",
+        "min_interact_cnt=500",
+        "max_data_cnt=300",
+        "执行 blueai-cli data social batch task 命令"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "获取「人民日报」公众号最近30天的文章列表，要带正文，每个号最多取100篇",
+      "expected_output": "识别为 realtime_wp 模式 → 调 blueai-cli data social wp post-list",
+      "files": [],
+      "expectations": [
+        "意图识别为 realtime_wp 模式",
+        "params JSON 中 names=['人民日报']",
+        "data_range=1（历史）",
+        "start_time 为今天减 30 天的 00:00:00 CST 时间戳",
+        "data_type=2（含正文）",
+        "max_data_cnt=100",
+        "命令为 blueai-cli data social wp post-list"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "获取这篇文章的正文：https://mp.weixin.qq.com/s/abcdef123",
+      "expected_output": "识别为 realtime_wp_detail 模式 → 调 blueai-cli data social wp post-detail",
+      "files": [],
+      "expectations": [
+        "意图识别为 realtime_wp_detail 模式（不需要询问数据时效性）",
+        "params JSON 中 urls=['https://mp.weixin.qq.com/s/abcdef123']",
+        "mode=2（默认纯文字+富文本）",
+        "命令为 blueai-cli data social wp post-detail"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "结构化调用：{\"_skill_call\":\"blueai-cli-social-data\",\"mode\":\"realtime_wx_channels_video_list\",\"params\":{\"names\":[\"央视新闻\"],\"is_download\":true,\"max_data_cnt\":50}}",
+      "expected_output": "识别 _skill_call 字段进入结构化模式，静默执行，最终输出 _skill_result JSON 块",
+      "files": [],
+      "expectations": [
+        "检测到 _skill_call 字段，无任何交互提示",
+        "调用 blueai-cli data social wx video-list --params '{\"names\":[\"央视新闻\"],\"is_download\":true,\"max_data_cnt\":50}'",
+        "输出末尾包含 _skill_result JSON 块",
+        "_skill_result.status 为 success 或 error",
+        "成功时 _skill_result 包含 task_id、cli_path、output_file、total_cnt 字段",
+        "_skill_result.cli_path 等于 'data social wx video-list'"
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "并发提交两个任务：小红书和抖音上的「防晒霜」，时间都是 2026-01-01 到 2026-03-31，等数据回来后通知我",
+      "expected_output": "识别批量需求 → 用 --params '[...]' JSON 数组 + --async + --concurrency 提交，agent 可在等待时做别的事",
+      "files": [],
+      "expectations": [
+        "params 为 JSON 数组，包含 2 个对象：media_id=4 和 media_id=5",
+        "每个对象都有 _label 用于结果关联（如 'xhs' 'dy'）",
+        "命令包含 --async --concurrency",
+        "提交后立即返回 task_id 列表，不阻塞",
+        "之后用 blueai-cli task wait --ids 或 task wait --all 等待"
+      ]
+    },
+    {
+      "id": 7,
+      "prompt": "列出我所有还没完成的任务",
+      "expected_output": "调用 blueai-cli task list（可选 --status pending）",
+      "files": [],
+      "expectations": [
+        "执行 blueai-cli task list 命令（或带 --status pending 过滤）",
+        "以表格形式展示 task_id、service、状态、创建时间等字段",
+        "不直接读 ~/.blueai/tasks.json（让 CLI 处理）"
+      ]
+    }
+  ]
+}

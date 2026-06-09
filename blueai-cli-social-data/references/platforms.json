@@ -1,0 +1,10 @@
+{
+  "version": "2.0",
+  "comment": "stock 模式 media_id 别名对照表。其他场景的输入识别规则见 references/input_conversion.md。modes 注册表见 references/modes.json。",
+  "stock_platforms": [
+    {"id": 1, "name": "微博",       "aliases": ["微博", "weibo", "wb"]},
+    {"id": 4, "name": "小红书",     "aliases": ["小红书", "xhs", "红书", "小红薯", "xiaohongshu", "rednote"]},
+    {"id": 5, "name": "抖音",       "aliases": ["抖音", "douyin", "dy", "抖"]},
+    {"id": 7, "name": "哔哩哔哩",   "aliases": ["哔哩哔哩", "b站", "B站", "bilibili", "bili", "b 站", "BiliBili"]}
+  ]
+}

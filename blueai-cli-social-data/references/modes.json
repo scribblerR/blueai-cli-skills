@@ -1,0 +1,173 @@
+{
+  "version": "2.0",
+  "comment": "10 个采集场景 → blueai-cli 命令的映射表。requires_fetch_data=true 表示 create 调用返回 task_id 后必须再调 data social task fetch-data 才能拿到数据。params.{name}.api_value 是 CLI --params 传入的字段名；params.{name}.user_alias_ref 指向 input_conversion.md 中的转换章节。",
+  "fetch_data_command": "data social task fetch-data",
+  "modes": [
+    {
+      "key": "stock",
+      "label": "存量数据 — 关键词搜帖子/评论",
+      "cli_path": "data social batch task",
+      "requires_fetch_data": true,
+      "supported_platforms": ["小红书", "抖音", "B站", "微博"],
+      "params": {
+        "required": ["keywords", "media_id", "start_time", "end_time"],
+        "optional": [
+          "filter_words", "search_type", "data_type", "must_include_comment",
+          "match_fields", "post_types", "max_data_cnt",
+          "min_content_len", "max_content_len", "min_interact_cnt", "max_interact_cnt",
+          "sort", "tokenized_keywords"
+        ]
+      },
+      "example": {
+        "keywords": "防晒霜",
+        "media_id": 4,
+        "start_time": 1767196800,
+        "end_time": 1774972799,
+        "data_type": 0,
+        "min_interact_cnt": 1000,
+        "sort": {"field": "interaction_cnt", "order": "DESC"},
+        "max_data_cnt": 500
+      }
+    },
+    {
+      "key": "realtime_wp",
+      "label": "公众号发文列表",
+      "cli_path": "data social wp post-list",
+      "requires_fetch_data": true,
+      "params": {
+        "required_one_of": ["names", "bizs", "urls"],
+        "required": ["data_range"],
+        "optional": ["start_time", "data_type", "max_data_cnt"]
+      },
+      "example": {
+        "names": ["人民日报", "新华社"],
+        "data_range": 1,
+        "start_time": 1767196800,
+        "data_type": 2,
+        "max_data_cnt": 100
+      }
+    },
+    {
+      "key": "realtime_wp_detail",
+      "label": "公众号文章详情（正文）",
+      "cli_path": "data social wp post-detail",
+      "requires_fetch_data": true,
+      "params": {
+        "required": ["urls"],
+        "optional": ["mode"]
+      },
+      "example": {
+        "urls": ["https://mp.weixin.qq.com/s/abcdefg"],
+        "mode": 2
+      }
+    },
+    {
+      "key": "realtime_wp_kw_search",
+      "label": "公众号关键词搜索",
+      "cli_path": "data social wp post-kw-search",
+      "requires_fetch_data": true,
+      "params": {
+        "required": ["keywords"],
+        "optional": ["sort_type", "period", "max_data_cnt"]
+      },
+      "example": {
+        "keywords": "人工智能 大模型",
+        "sort_type": 1,
+        "period": 30,
+        "max_data_cnt": 100
+      }
+    },
+    {
+      "key": "realtime_wp_comment",
+      "label": "公众号文章评论",
+      "cli_path": "data social wp post-comment",
+      "requires_fetch_data": true,
+      "params": {
+        "required": ["urls"],
+        "optional": ["need_post_info", "max_data_cnt"]
+      },
+      "example": {
+        "urls": ["https://mp.weixin.qq.com/s/abcdefg"],
+        "need_post_info": 1,
+        "max_data_cnt": 500
+      }
+    },
+    {
+      "key": "realtime_wx_channels_kw_search",
+      "label": "视频号关键词搜账号",
+      "cli_path": "data social wx video-account-kw-search",
+      "requires_fetch_data": true,
+      "params": {
+        "required": ["keywords"],
+        "optional": []
+      },
+      "example": {
+        "keywords": "美食探店"
+      }
+    },
+    {
+      "key": "realtime_wx_channels_video_list",
+      "label": "视频号视频列表",
+      "cli_path": "data social wx video-list",
+      "requires_fetch_data": true,
+      "params": {
+        "required": ["names"],
+        "optional": ["start_time", "is_download", "max_data_cnt"]
+      },
+      "example": {
+        "names": ["央视新闻"],
+        "is_download": true,
+        "max_data_cnt": 100
+      }
+    },
+    {
+      "key": "realtime_wx_channels_video_comment",
+      "label": "视频号视频评论",
+      "cli_path": "data social wx video-comment",
+      "requires_fetch_data": true,
+      "params": {
+        "required": ["video_ids"],
+        "optional": ["need_post_info", "max_data_cnt"]
+      },
+      "example": {
+        "video_ids": ["vid_abc123"],
+        "need_post_info": 1
+      }
+    },
+    {
+      "key": "realtime_wx_channels_video_search",
+      "label": "搜一搜搜视频",
+      "cli_path": "data social wx web-search-videos",
+      "requires_fetch_data": true,
+      "params": {
+        "required": ["keyword"],
+        "optional": ["sort_type", "publish_time_type", "sub_search_type", "is_download", "max_data_cnt", "need_gs_url"]
+      },
+      "example": {
+        "keyword": "科技",
+        "sort_type": 0,
+        "publish_time_type": 2,
+        "max_data_cnt": 100
+      }
+    },
+    {
+      "key": "realtime_wx_channels_video_download",
+      "label": "视频下载链接",
+      "cli_path": "data social wx video-download-url",
+      "requires_fetch_data": true,
+      "params": {
+        "required": ["video_ids"],
+        "optional": []
+      },
+      "example": {
+        "video_ids": ["vid_abc123"]
+      }
+    }
+  ],
+  "platform_aliases_for_stock": {
+    "媒体ID 1": ["微博", "weibo", "wb"],
+    "媒体ID 4": ["小红书", "xhs", "红书", "小红薯", "rednote"],
+    "媒体ID 5": ["抖音", "douyin", "dy"],
+    "媒体ID 7": ["哔哩哔哩", "B站", "b站", "bilibili", "bili"]
+  }
+}
